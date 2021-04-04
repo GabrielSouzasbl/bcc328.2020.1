@@ -1,5 +1,3 @@
-(* Test syntax analyser *)
-
 module L = Lexing
 
 let check str =
@@ -16,7 +14,6 @@ let check str =
      Format.printf "%a error: %s%!" Location.pp_location loc msg
 
 let%expect_test _ =
-  (* function declaration and constant expression *)
   check "int f(int x) = 100";
   [%expect{|
                  ╭───────╮
@@ -124,7 +121,6 @@ let%expect_test _ =
   check "bool f(int x) = 2 < 3 < 4";
   [%expect{| :1.23 error: syntax |}];
 
-  (* if then else expression *)
   check "int f(int x) = if 4 < 5 then 5 else 4";
   [%expect{|
                                  ╭───────╮
@@ -149,7 +145,6 @@ let%expect_test _ =
 check "int f(int x) = if 7 < 5 + 4 < 5 then 5 else 4";
 [%expect{| :1.29 error: syntax |}];
 
-(* id expression *)
 check "int f(int x) = x";
 [%expect{|
               ╭───────╮
@@ -170,7 +165,6 @@ check "int f(int x) = x";
 check "int f(int x) = int y";
 [%expect{| :1.18 error: syntax |}];
 
-(* let in expression *)
 check "int f(int x) = let var = 3 in var + 3";
 [%expect{|
                           ╭───────╮
@@ -216,7 +210,6 @@ check "int f(int x) = let var = 3 in var < 3";
                                      │IdExp var│ │IntExp 3│
                                      ╰─────────╯ ╰────────╯ |}];
 
-(* id list of expressions - functions call*)
 check "int f(int x) = y(1 + 3 + 4, 5 < 4, if 3 < 2 then 1 else 2)";
 [%expect{|
                                                           ╭───────╮
@@ -242,7 +235,6 @@ check "int f(int x) = y(1 + 3 + 4, 5 < 4, if 3 < 2 then 1 else 2)";
                           │IntExp 1│ │IntExp 3│                                  │IntExp 3│ │IntExp 2│
                           ╰────────╯ ╰────────╯                                  ╰────────╯ ╰────────╯ |}];
 
-(* program *)
 check "int f(int x) = x (1 + 3 + 4, 5 < 4)\nint f(int x) = if 4 < 5 then x else 4";
 [%expect{|
                                                                       ╭───────╮
